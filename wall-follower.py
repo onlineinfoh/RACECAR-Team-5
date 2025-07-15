@@ -1,9 +1,9 @@
 # necessary imports and setting
 import sys
-import numpy as np
+import numpy as np # type: ignore 
 sys.path.insert(1, '../../library')
-import racecar_core
-import racecar_utils as rc_utils
+import racecar_core # type: ignore 
+import racecar_utils as rc_utils # type: ignore 
 
 # Create global variable and initialization
 rc = racecar_core.create_racecar()
