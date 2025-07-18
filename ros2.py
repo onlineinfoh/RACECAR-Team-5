@@ -106,10 +106,6 @@ class CompFilterNode(Node):
         x = tilt_angle[0]
         y = tilt_angle[1]
     
-        # Derive tilt angles from accelerometer
-        #wrong
-        #accel_roll = tilt_compensated_mag[0] # theta_x
-        #accel_pitch = tilt_compensated_mag[1] # theta_y
 
         # TODO: Integrate gyroscope (angular velocity) to get attitude angles (theta)
         self.gyro_roll +=  dt * gyro[0] # theta_xt
@@ -127,6 +123,11 @@ class CompFilterNode(Node):
                                     -mx * np.sin(x) + my * np.cos(x) * np.sin(y) + mz * np.cos(x) * np.cos(y)]
             mag_accel_yaw=np.arctan2(-tilt_compensated_mag[1],tilt_compensated_mag[0])
 
+            # Derive tilt angles from accelerometer
+            # wrong
+            accel_roll = tilt_compensated_mag[0] # theta_x
+            accel_pitch = tilt_compensated_mag[1] # theta_y
+
             tilt_b=np.array([np.cos(x),np.sin(x)*np.sin(y),np.sin(x)*np.cos(y)],[0,np.cos(y),-np.sin(y)],[-np.sin(x),np.cos(x)*np.sin(y),np.cos(x)*np.sin(y)])
             tilt_b_inv=np.linalg.inv(tilt_b)
             accel_matrix=np.array(accel)
@@ -139,7 +140,7 @@ class CompFilterNode(Node):
         # TODO: Fuse gyro, mag, and accel derivations in complementary filter
         self.roll  = self.alpha * self.gyro_roll + (1.0-self.alpha) * x
         self.pitch = self.alpha * self.gyro_pitch + (1.0-self.alpha) * y
-        self.yaw = self.alpha * self.gyro_yaw + (1.0-self.alpha) * mag_theta_z
+        self.yaw = self.alpha * self.gyro_yaw + (1.0-self.alpha) * mag_accel_yaw
 
         # Print results for sanity checking
 
