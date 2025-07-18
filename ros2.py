@@ -27,7 +27,7 @@ import numpy as np # type: ignore
 import math
 import time
 
-# Clamp the angle value, in radian, within the range [0, 2pi]
+# Clamp the angle value, in radians, within the range [0, 2pi]
 def clamp_angle(angle):
     if angle < 0: 
         while angle<0:
@@ -99,25 +99,19 @@ class CompFilterNode(Node):
         # tilt angle calculation using linear acceleration data
         tilt_angle = [np.arctan2(accel[1], accel[2]), np.arctan2(-accel[0], np.sqrt(accel[1] * accel[1] + accel[2] * accel[2])), 0]
         
-        # Offset by 180 degrees
+        # Offset by 180 degrees to account for left hand rule and not right hand rule
         tilt_angle[0] = tilt_angle[0] + np.pi
         
-        if self.mag: 
-            mx, my, mz = self.mag
+        # tilt angles
         x = tilt_angle[0]
         y = tilt_angle[1]
-        tilt_compensated_mag = [mx * np.cos(x) + my * np.sin(y) + mz * np.sin(x) * np.cos(y), 
-                                my * np.cos(y)-mz*np.sin(y),
-                                -mx * np.sin(x) + my * np.cos(x) * np.sin(y) + mz * np.cos(x) * np.cos(y)]
-        
-        mag_theta_z=np.arctan2(-tilt_compensated_mag[1],tilt_compensated_mag[0])
     
         # Derive tilt angles from accelerometer
-        accel_roll = tilt_compensated_mag[0] # theta_x
-        accel_pitch = tilt_compensated_mag[1] # theta_y
+        #wrong
+        #accel_roll = tilt_compensated_mag[0] # theta_x
+        #accel_pitch = tilt_compensated_mag[1] # theta_y
 
-
-        # TODO: Integrate gyroscope to get attitude angles
+        # TODO: Integrate gyroscope (angular velocity) to get attitude angles (theta)
         self.gyro_roll +=  dt * gyro[0] # theta_xt
         self.gyro_pitch += dt * gyro[1] # theta_yt
         self.gyro_yaw += dt * gyro[2]   # theta_zt
@@ -125,13 +119,19 @@ class CompFilterNode(Node):
         # TODO: Compute yaw angle from magnetometer
         if self.mag:
             mx, my, mz = self.mag
-            mag_accel_yaw = mag_theta_z
+            # since the tilt angle from the accelerometer is 0 
+            # (since the gravity vector is not changed when rotating around the z axis)
+            # the tilt needs to be compensated using the magnetometer values
+            tilt_compensated_mag = [mx * np.cos(x) + my * np.sin(y) + mz * np.sin(x) * np.cos(y), 
+                                    my * np.cos(y)-mz*np.sin(y),
+                                    -mx * np.sin(x) + my * np.cos(x) * np.sin(y) + mz * np.cos(x) * np.cos(y)]
+            mag_accel_yaw=np.arctan2(-tilt_compensated_mag[1],tilt_compensated_mag[0])
         else:
             mag_accel_yaw = self.yaw
         
         # TODO: Fuse gyro, mag, and accel derivations in complementary filter
-        self.roll  = self.alpha * self.gyro_roll + (1.0-self.alpha) * accel_roll
-        self.pitch = self.alpha * self.gyro_pitch + (1.0-self.alpha) * accel_pitch
+        self.roll  = self.alpha * self.gyro_roll + (1.0-self.alpha) * x
+        self.pitch = self.alpha * self.gyro_pitch + (1.0-self.alpha) * y
         self.yaw = self.alpha * self.gyro_yaw + (1.0-self.alpha) * mag_theta_z
 
         # Print results for sanity checking
