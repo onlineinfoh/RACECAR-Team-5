@@ -186,20 +186,45 @@ class CompFilterNode(Node):
             ]
             ################################################################
             
+            # A. Kalman filter on acceleration
+
             # Kalman filter
             ax_f = self.kf_ax.update(float(tilt_compensated_accel[0]))
             ay_f = self.kf_ax.update(float(tilt_compensated_accel[1]))
             az_f = self.kf_ax.update(float(tilt_compensated_accel[2]))
 
-            # Normal calculation
-            self.v_x += dt * tilt_compensated_accel[0]
-            self.v_y += dt * tilt_compensated_accel[1]
-            self.v_z += dt * tilt_compensated_accel[2]
+            # Normal calculation (without Kalman filter)
+            #self.v_x += dt * tilt_compensated_accel[0]
+            #self.v_y += dt * tilt_compensated_accel[1]
+            #self.v_z += dt * tilt_compensated_accel[2]
 
-            # Kalman filter calculation
+            # Velocity calculation
             self.v_x += dt * ax_f
             self.v_y += dt * ay_f
             self.v_z += dt * az_f
+
+            ################################################################
+
+            ################################################################
+            
+            # B. Kalman filter on velocity
+
+            # Kalman filter
+            ax_f = self.kf_ax.update(float(tilt_compensated_accel[0]*dt))
+            ay_f = self.kf_ax.update(float(tilt_compensated_accel[1]*dt))
+            az_f = self.kf_ax.update(float(tilt_compensated_accel[2]*dt))
+
+            # Normal calculation (without Kalman filter)
+            #self.v_x += dt * tilt_compensated_accel[0]
+            #self.v_y += dt * tilt_compensated_accel[1]
+            #self.v_z += dt * tilt_compensated_accel[2]
+
+            # Velocity calculation
+            self.v_x += ax_f
+            self.v_y += ay_f
+            self.v_z += az_f
+
+            ################################################################
             
             print(f"raw accel: {tilt_compensated_accel}, filt accel: {[ax_f, ay_f, az_f]}")
 
