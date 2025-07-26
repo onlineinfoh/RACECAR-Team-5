@@ -1,10 +1,10 @@
-# RACECAR TEAM 5 - Tianxi Liang, Aidan Wong, Claire Shen, Krista Sebastian
+# RACECAR TEAM 5 
+
+Developed by: Tianxi Liang, Aidan Wong, Claire Shen, Krista Sebastian
 
 Welcome to the repository of Team 5 from the MIT BWSI RACECAR program. This repository contains algorithms for car following, lane detection, wall following, and traffic sign recognition using ROS2, Python, and TensorFlow Lite.
 
 ---
-
-## Directory Overview
 
 ### Models
 - **`car-follower-v1.tflite` / `car-follower-v1_edgetpu.tflite`**  
