@@ -13,21 +13,21 @@ class CommReceiver(Node):
         self.subscription  # prevent unused-variable warning
 
     def attitude_callback(self, data: Vector3):
-        roll = data[0]
-        pitch = data[1]
-        yaw = data[2]
+        roll = data.x
+        pitch = data.y
+        yaw = data.z
         self.get_logger().info(f"roll: {roll} | pitch: {pitch} | yaw: {yaw}")
 
     def velocity_callback(self, data: Vector3):
-        vx = data[0]
-        vy = data[1]
-        vz = data[2]
+        vx = data.x
+        vy = data.y
+        vz = data.z
         self.get_logger().info(f"vx: {vx} | vy: {vy} | vz: {vz}")
 
     def pose_estimate_callback(self, data: Vector3):
-        xpos = data[0]
-        ypos = data[1]
-        angle = data[2]
+        xpos = data.x
+        ypos = data.y
+        angle = data.z
         self.get_logger().info(f"x pos: {xpos} | y pos: {ypos} | angle: {angle}")
 
 def main(args=None):

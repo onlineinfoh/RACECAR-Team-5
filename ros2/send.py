@@ -56,7 +56,7 @@ class VelocityNode(Node):
         self.publisher_pose_estimate = self.create_publisher(Vector3, '/pose_estimate', 10)  
 
         # set up timer to send info
-        self.create_timer(0.,self.imu_callback)
+        # self.create_timer(0.,self.imu_callback)
 
         # variables initializations for pose calculations
         self.prev_time = self.get_clock().now().nanoseconds / 10**9 # initialize time checkpoint
@@ -326,31 +326,32 @@ class VelocityNode(Node):
 
         self.counter+=1
         if self.counter % 4 == 0:
-            print("lidar vel", sum(self.avg_x_velocity)/5, self.lidar_velocity_y)
+            #print("lidar vel", sum(self.avg_x_velocity)/5, self.lidar_velocity_y)
             #print("lidar vel", self.lidar_velocity_x, self.lidar_velocity_y)
-            print("vel:", self.x_velocity, self.y_velocity, self.z_velocity)
-            print("pos", self.x_pos, self.y_pos)
+            #print("vel:", self.x_velocity, self.y_velocity, self.z_velocity)
+            #print("pos", self.x_pos, self.y_pos)
+            pass
         
         
         # publish attitude
         attitude = Vector3()
-        attitude.x = self.roll
-        attitude.y = self.pitch
-        attitude.z = self.yaw
+        attitude.x = float(self.roll)
+        attitude.y = float(self.pitch)
+        attitude.z = float(self.yaw)
         self.publisher_attitude.publish(attitude)
 
         # publish velocity
         velocity = Vector3()
-        velocity.x = self.x_velocity
-        velocity.y = self.y_velocity
-        velocity.z = self.z_velocity
+        velocity.x = float(self.x_velocity)
+        velocity.y = float(self.y_velocity)
+        velocity.z = float(self.z_velocity)
         self.publisher_velocity.publish(velocity)
 
         # publish pose estimate
         pose_estimate = Vector3()
-        pose_estimate.x = self.x_pos
-        pose_estimate.y = self.y_pos
-        pose_estimate.z = self.yaw
+        pose_estimate.x = float(self.x_pos)
+        pose_estimate.y = float(self.y_pos)
+        pose_estimate.z = float(self.yaw)
         self.publisher_pose_estimate.publish(pose_estimate)
         
 
@@ -362,7 +363,7 @@ class VelocityNode(Node):
     def lidar_callback(self, data):
         scan_data_orig = np.flip(np.multiply(np.array(data.ranges), 100))
         self.scan_data = np.array([0 if str(x) == "inf" else x for x in scan_data_orig])
-
+                        
     def get_lidar_image(self, scan):
         # Convert polar to Cartesian
         angles_deg = np.arange(0, 360, 1/3)
@@ -402,10 +403,12 @@ class VelocityNode(Node):
 
 def main(args=None):
     rclpy.init(args=args)
+    print(f"init completed")
     node = VelocityNode()
+    print("velocity node done")
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
 
 if __name__ == '__main__':
-    main() 
+    main()
