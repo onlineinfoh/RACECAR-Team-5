@@ -43,7 +43,7 @@ def update():
     derror=error-prev_error
 
     # Combine the proportional term and the derivative term to compute the angle
-    angle = kperror + derror/dt * kd
+    angle = kp * error + derror/dt * kd
     # print(angle)
     # Clamp the angle 
     prev_angle = angle
@@ -55,7 +55,7 @@ def update():
     cangle=rc_utils.clamp(angle, -1.0,1.0)
     
     # Apply speed controller
-    speed = 1 - kps np.abs(cangle)
+    speed = 1 - kps * np.abs(cangle)
     rc.drive.set_speed_angle(speed, cangle)
     prev_error=error
 
@@ -63,6 +63,6 @@ def update_slow():
     pass
 
 # Main function, DO NOT CHANGE
-if name == "main":
+if __name__ == "__main__":
     rc.set_start_update(start, update, update_slow)
     rc.go()
