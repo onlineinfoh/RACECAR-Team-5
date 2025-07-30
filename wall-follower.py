@@ -22,7 +22,7 @@ def start():
 
 
 def update():
-    # Global variable
+    # Global variables
     global speed, angle
     global prev_error, prev_angle
 
@@ -39,25 +39,33 @@ def update():
     # proportional factor and derivative factor
     kd = 0.004 # 0.003
     kp = 0.005 # 0.005
+
     # Calculate the change in error
     derror=error-prev_error
 
     # Combine the proportional term and the derivative term to compute the angle
     angle = kp * error + derror/dt * kd
-    # print(angle)
-    # Clamp the angle 
-    prev_angle = angle
-    dangle = angle - prev_angle
-    print(f"Speed: {speed} Angle: {angle}")
 
-    kps = 0.245
-
+    # Clamp the angle
     cangle=rc_utils.clamp(angle, -1.0,1.0)
+
+    # Calculate the change in angle
+    # UNUSED
+    dangle = angle - prev_angle
+
+    # Proportional control for speed
+    kps = 0.245
     
     # Apply speed controller
     speed = 1 - kps * np.abs(cangle)
+
+    # Send speed and angle values to racecar
     rc.drive.set_speed_angle(speed, cangle)
+    print(f"Speed: {speed} Angle: {angle}")
+    
+    # Assign prev values to calculate change in the next iteration
     prev_error=error
+    prev_angle = angle
 
 def update_slow():
     pass
