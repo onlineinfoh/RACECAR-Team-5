@@ -1,18 +1,18 @@
 import os
 import sys
 import time
-import cv2 as cv # type: ignore
-import numpy as np # type: ignore
+import cv2 as cv
+import numpy as np
 
 sys.path.insert(1, "library")
-import racecar_core # type: ignore
-import racecar_utils as rc_utils # type: ignore
+import racecar_core
+import racecar_utils as rc_utils
 
-from pycoral.adapters.common import input_size # type: ignore
-from pycoral.adapters.detect import get_objects # type: ignore
-from pycoral.utils.dataset import read_label_file # type: ignore
-from pycoral.utils.edgetpu import make_interpreter # type: ignore
-from pycoral.utils.edgetpu import run_inference # type: ignore
+from pycoral.adapters.common import input_size
+from pycoral.adapters.detect import get_objects
+from pycoral.utils.dataset import read_label_file
+from pycoral.utils.edgetpu import make_interpreter
+from pycoral.utils.edgetpu import run_inference
 
 # Define paths to model and label directories
 default_path = 'models' # location of model weights and labels
@@ -46,7 +46,8 @@ sign = ""
 
 center = 0
 
-tag = {1:'do not enter',2:'fake go around',3:'fake stop',4:'fake yield',5:'go around',6:'one way left',7:'one way right',8:'stop sign',9:'yield'}
+# dictionary of sign names and IDs
+tag = {1:'do not enter', 2:'fake go around', 3:'fake stop', 4:'fake yield', 5:'go around', 6:'one way left', 7:'one way right', 8:'stop sign', 9:'yield'}
                 
 # [FUNCTION] Modify image to label objs and score
 def append_objs_to_img(cv2_im, inference_size, objs, labels):
@@ -100,43 +101,45 @@ def update():
     # Combine the proportional term and the derivative term to compute the angle 
     angle = kp*error + derror/dt*kd
     # print(angle)
-    # Clamp the angle 
+ 
     prev_angle = angle
     dangle = angle - prev_angle
 
     kps = 0.1
     # kds = 0.1*0
     
-    cangle=rc_utils.clamp(angle, -1.0,1.0)
+    cangle=rc_utils.clamp(angle, -1.0, 1.0) # clamps the angle into a range receivable by the car
+
     # Apply speed controller
-    #speed= 1- kps * np.abs(cangle) +dangle/dt *kds
+    #speed = 1- kps * np.abs(cangle) +dangle/dt *kds
     speed = 0.7 - kps * np.abs(cangle)
     # if np.abs(angle) > 0.7:
     #     speed = 0.8
     if sign=="stop sign":
-        rc.drive.set_speed_angle(0, 0)
+        rc.drive.set_speed_angle(0, 0) # stops car by setting speed and angle to 0
     elif sign == "yield":
-        rc.drive.set_speed_angle(0.1, 0)
+        rc.drive.set_speed_angle(0.1, 0) # slows car by setting angle to 0 and slowing speed to 0.1
     elif sign == "go around":
-        if center>=160:
-            rc.drive.set_speed_angle(0.3, -0.7)
-        else:
-            rc.drive.set_speed_angle(0.3, 0.7)
+        if center>=160: # if car is to the left of the sign 
+            rc.drive.set_speed_angle(0.3, -0.7) # turn left -> goes around left side
+        else: # if car is to the left of the sign 
+            rc.drive.set_speed_angle(0.3, 0.7) # turn left -> goes around left side
     else:
         rc.drive.set_speed_angle(speed, cangle)
         
-    prev_error=error
+    prev_error = error # updates previous error in order to find derror
 #############################################################################################
 
 # Called once per second
 def update_slow():
     global center
     global sign
-    frame = rc.camera.get_color_image()
+
+    frame = rc.camera.get_color_image() # gets camera frame
     
-    if frame is not None:
-        rgb_image = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-        rgb_image = cv.resize(rgb_image, inference_size)
+    if frame is not None: # if there is a frame
+        rgb_image = cv.cvtColor(frame, cv.COLOR_BGR2RGB) # converts image to RGB to perform operations more easily
+        rgb_image = cv.resize(rgb_image, inference_size) 
         
         run_inference(interpreter, rgb_image.tobytes())
         objs = get_objects(interpreter, SCORE_THRESH)[:NUM_CLASSES]
@@ -144,14 +147,14 @@ def update_slow():
 
         rc.display.show_color_image(image)
         if len(objs) == 0:
-            sign = ""
+            sign = "" # resets current sign to empty if no signs
         for obj in objs:
             if obj.score > 0.6:
                 sign = tag[obj.id+1]
                 if sign == "go around":
-                    loc = (obj.bbox.xmin + obj.bbox.xmax)//2
+                    loc = (obj.bbox.xmin + obj.bbox.xmax)//2 # sets (x) location of the sign's boundary box by taking avg of its right and left ends
                     center = loc
-                print(f"{tag[obj.id+1]}")
+                print(f"{tag[obj.id+1]}") # prints corresponding sign name
                 break
             sign = ""
 
