@@ -154,7 +154,7 @@ def update_slow():
                 if sign == "go around":
                     loc = (obj.bbox.xmin + obj.bbox.xmax)//2 # sets (x) location of the sign's boundary box by taking avg of its right and left ends
                     center = loc
-                print(f"{tag[obj.id+1]}") # prints corresponding sign name
+                print(f"{tag[obj.id+1]}") # prints corresponding sign
                 break
             sign = ""
 
