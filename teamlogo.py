@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as np # type: ignore
 
 # MURICA (created using pixel art maker, converted into array)
 array = [[0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
