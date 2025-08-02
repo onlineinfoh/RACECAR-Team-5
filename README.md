@@ -2,11 +2,11 @@
 
 **MIT Beaver Works Summer Institute (BWSI) Autonomous RACECAR – Team 5 (Tianxi Liang, Aidan Wong, Claire Shen, Krista Sebastian)**
 ## Week 4 quest log challenge attempting:
-* **Github documentation
-* **Object classifier
-* **Object detector
-* **Dynamic obstacle(elevator)
-* **Double sensor usage for the final grand-prix code
+* Github documentation
+* Object classifier (run sign-detection.py)
+* Object detector (run car-follow.py)
+* Dynamic obstacle (elevator in grand-prix)
+* Double sensor usage for the final grand-prix code
 
 ## Structure
 
