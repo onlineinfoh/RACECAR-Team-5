@@ -171,24 +171,34 @@ def update_aruco():
 
     for marker in markers:
         area = find_area(marker.get_corners_aruco_format())
-        if marker.get_id() == 32 and area >= 1400:
-            state = 'BETWEEN LINES'
+        if marker.get_id() == 0 and area >= 0:
+            state = 'LEFT WALL'
+        elif marker.get_id() == 1 and area >= 0:
+            state = 'ELEVATOR'
+        elif marker.get_id() == 4 and area >= 0:
+            state = 'LEFT WALL'
+        elif marker.get_id() == 5 and area >= 0:
+            state = 'LEFT WALL'
 
+def left_wall():
+    pass
+
+def elevator():
+    pass
 
 
 def start():
     rc.drive.set_speed_angle(speed, angle)
 
- 
 def update():
     global speed, angle
 
     update_aruco()
 
-    if state == '':
-        pass
-    else:
-        pass
+    if state == 'LEFT WALL':
+        left_wall()
+    elif state == 'ELEVATOR':
+        elevator()
 
 
     rc.drive.set_speed_angle(speed, angle)
