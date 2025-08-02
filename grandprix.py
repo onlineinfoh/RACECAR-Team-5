@@ -52,7 +52,7 @@ tag = {1:'stop',2:"go"}
 
 state = 1
 
-elv_count=0
+elv_count=False
 
 import sys
 import cv2 # type: ignore
@@ -164,11 +164,20 @@ def update():
     else:
         rc.drive.set_speed_angle(0, 0)
         thresh = 3000
-        if sign == "go":
+        if sign == "go" and elv_count:
+            speed=00.8
             if area > thresh:
                 rc.drive.set_speed_angle(0, 0)
             setpoint = 320
-            error = 
+            error = center - setpoint
+
+            kp = 0.05
+            angle = kp * error
+
+            rc.drive.set_speed_angle(speed, angle)
+        elif sign=="stop":
+            elv_count=True
+            rc.drive.set_speed_angle(0, 0)
         elif sign == "":
             pass
             # hard code
