@@ -1,0 +1,9 @@
+do not enter
+fake go around
+fake stop
+fake yield
+go around
+one way left
+one way right
+stop sign
+yield
