@@ -1,45 +1,78 @@
-# RACECAR TEAM 5 
+# RACECAR TEAM 5
 
-Developed by: Tianxi Liang, Aidan Wong, Claire Shen, Krista Sebastian
+**MIT Beaver Works Summer Institute (BWSI) Autonomous RACECAR – Team 5 (Tianxi Liang, Aidan Wong, Claire Shen, Krista Sebastian)**
+## Week 4 quest log challenge attempting:
+* **Github documentation
+* **Object classifier
+* **Object detector
+* **Dynamic obstacle(elevator)
+* **Double sensor usage for the final grand-prix code
 
-Welcome to the repository of Team 5 from the MIT BWSI RACECAR program. This repository contains algorithms for car following, lane detection, wall following, and traffic sign recognition using ROS2, Python, and TensorFlow Lite.
+## Structure
 
----
+```
+RACECAR-Team-5/
+├── data_zip/        # Archived training datasets
+├── models/          # TFLite models and label files
+├── ros2/            # ROS2 nodes and memo
+├── *.py             # Autonomous behaviors algorithms
+└── README.md        # Project overview
+```
 
-### Models
-- **`car-follower-v1.tflite` / `car-follower-v1_edgetpu.tflite`**  
-  TensorFlow Lite models for car-following behavior. The EdgeTPU version is optimized for Coral accelerators.
-- **`objects.txt`**  
-  List of object labels corresponding to the model’s outputs.
+## Autonomous Behaviors
 
----
+* **ar-tag.py**           AR tags detection and info extraction script
+* **car-follow.py**      Car following(conga line) using TFLite model inference
+* **cone-slalom.py**      Cone slalom, using color and LIDAR
+* **line-follower.py**    Color lane following
+* **wall-follower.py**    LIDAR and PID wall following
+* **grandprix.py**        Final RACECAR 2025 grand prix submission
+* **sign-detecton.py**    Traffic sign detection using TFLite models
+* **teamlogo.py**         Matrix display of team logo
+* **imu.py**              IMU attitude, velocity and pose estimation calculation
 
-### Python Scripts
+## Utilities
 
-#### Autonomous Behaviors
-- **`car-follower-runner.py`**  
-  Runs car-following model with live camera input.
-- **`cone-slalom.py`**  
-  Controls the car through a cone slalom course using color detection and Lidar.
-- **`line-follower.py`**  
-  Lane-following via color detection.
-- **`wall-follower.py`**  
-  Keeps a consistent distance from a wall using LIDAR and PID control.
+* **data-collection.py**  Simplified data collection script
+* **img-counter.py**      Counts images all the directories specified
 
-#### Utilities
-- **`data-collection.py`**  
-  Captures image and sensor data for training.
-- **`img-counter.py`**  
-  Utility for counting the number images for training.
-- **`model-node.py`**  
-  ROS2 node to load and run ML inference (car-follow or sign-detect models).
-- **`ros2.py`**  
-  ROS2 helper node for IMU pose estimates
+## Models
 
----
+* **Car Follow**
 
-### Data Archives
-- **`car-follow-data.zip`**  
-  Collected dataset for car-following model training.
-- **`sign-detect-data.zip`**  
-  Dataset for traffic sign detection and classification.
+  * `car-follow-v1.tflite`
+  * `car-follow-v1_edgetpu.tflite`
+  * `car-follow-v2.tflite`
+  * `car-follow-v2_edgetpu.tflite`
+
+* **Sign Detect**
+
+  * `sign-detect-v1.tflite`
+  * `sign-detect-v1_edgetpu.tflite`
+  * `sign-detect-v2.tflite`
+  * `sign-detect-v2_edgetpu.tflite`
+
+* **Elevator**
+
+  * `elevator.tflite`
+  * `elevator_edgetpu.tflite`
+
+* **Labels**
+
+  * `objects.txt`                Car following label mapping
+  * `sign-detect-objects.txt`    Traffic sign labels
+  * `elevator-objects.txt`       Elevator dataset labels
+
+## ROS 2 Nodes (`ros2/`)
+
+* **send.py**       ROS2 publisher node
+* **receive.py**    ROS2 subscriber node
+* **note.md**       Usage note 
+
+## Data zip folder (`data_zip/`)
+
+* **car-follow-data.zip**         Car follow training data
+* **v2-car-follow-data.zip**      Car follow training data with more images added
+* **sign-detect-data.zip**        Sign detection training data
+* **v2-sign-detect-data.zip**     Sign detection training data with more images added
+* **elevator.zip**                Go/Stop sign detection training data for grand prix elevator challenge 
